@@ -13,9 +13,32 @@
 </head>
 <body class="bg-gray-100 p-4">
     <div class="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
-        <div class="flex items-center gap-2 mb-6">
-            <h1 class="text-2xl font-semibold">Note Offer Calculator</h1>
-        </div>
+        <div class="mb-6">
+            <h1 class="text-2xl font-semibold mb-4">Note Offer Calculator</h1>
+            
+            <div class="bg-blue-50 p-4 rounded-lg mb-4">
+                <h2 class="font-semibold mb-2">How to Use This Calculator:</h2>
+                <ol class="list-decimal list-inside space-y-1 text-sm">
+                    <li>Enter the current Unpaid Principal Balance (UPB)</li>
+                    <li>Input the Monthly Payment amount</li>
+                    <li>Specify the remaining Term in months</li>
+                    <li>Enter your desired Annual Yield percentage</li>
+                    <li>Input your target Cash-on-Cash Return percentage</li>
+                    <li>Click "Calculate Offer" to see results</li>
+                </ol>
+            </div>
+
+            <div class="bg-yellow-50 p-4 rounded-lg text-sm">
+                <p class="font-semibold mb-2">⚠️ Important Disclaimer:</p>
+                <p>This calculator is provided as a tool to assist in initial note evaluation only. Results should be verified using multiple methods. Always:</p>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>Perform thorough due diligence on any note investment</li>
+                    <li>Verify all numbers independently</li>
+                    <li>Consider consulting with financial and legal professionals</li>
+                    <li>Review all note documentation carefully</li>
+                    <li>Assess risks including but not limited to default, property condition, and title issues</li>
+                </ul>
+            </div>
 
         <form id="calculatorForm" class="space-y-4">
             <div>
@@ -33,7 +56,7 @@
             <div>
                 <label class="block text-sm font-medium mb-1">Term (Months)</label>
                 <input type="number" id="term" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
-                       placeholder="e.g., 262.6" step="0.1" required>
+                       placeholder="e.g., 360" step="0.1" required>
             </div>
 
             <div>
@@ -120,6 +143,10 @@
             resultsDiv.innerHTML = `
                 <div class="p-4 bg-green-50 rounded-lg">
                     <h3 class="text-lg font-semibold text-green-800">Recommended Offer Price</h3>
+                    <p className="mt-2 text-sm text-green-600">
+                This is the lowest of: yield-based offer, cash-on-cash-based offer, and UPB,
+                ensuring all return requirements are met while not exceeding the UPB.
+              </p>
                     <p class="text-2xl font-bold text-green-700">$${recommendedOffer.toLocaleString('en-US', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2
