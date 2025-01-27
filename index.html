@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Note Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
+        <div class="flex items-center gap-2 mb-6">
+            <h1 class="text-2xl font-semibold">Note Offer Calculator</h1>
+        </div>
+
+        <form id="calculatorForm" class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-1">Unpaid Principal Balance (UPB)</label>
+                <input type="number" id="upb" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
+                       placeholder="e.g., 48000" step="0.01" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Monthly Payment</label>
+                <input type="number" id="monthlyPayment" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
+                       placeholder="e.g., 372.29" step="0.01" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Term (Months)</label>
+                <input type="number" id="term" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
+                       placeholder="e.g., 262.6" step="0.1" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Desired Annual Yield (%)</label>
+                <input type="number" id="desiredYield" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
+                       placeholder="e.g., 10" step="0.1" required>
+            </div>
+
+            <div>
+                <label class="block text-sm font-medium mb-1">Desired Cash-on-Cash Return (%)</label>
+                <input type="number" id="desiredCocReturn" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
+                       placeholder="e.g., 12" step="0.1" required>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
+                Calculate Offer
+            </button>
+        </form>
+
+        <div id="error" class="hidden mt-4 p-4 bg-red-50 rounded border border-red-500 text-red-700"></div>
+
+        <div id="results" class="mt-4 space-y-4">
+            <!-- Results will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        function calculateYieldOffer(pmt, n, r) {
+            try {
+                const i = r / 12 / 100;
+                const presentValue = -pmt * (1 - Math.pow(1 + i, -n)) / i;
+                return Math.round(Math.abs(presentValue) * 100) / 100;
+            } catch (err) {
+                console.error('Yield calculation error:', err);
+                return null;
+            }
+        }
+
+        function calculateCoCOffer(pmt, cocReturn) {
+            try {
+                const annualCashFlow = pmt * 12;
+                const offerPrice = (annualCashFlow * 100) / cocReturn;
+                return Math.round(offerPrice * 100) / 100;
+            } catch (err) {
+                console.error('CoC calculation error:', err);
+                return null;
+            }
+        }
+
+        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Form submitted');
+            
+            const upb = parseFloat(document.getElementById('upb').value);
+            const pmt = parseFloat(document.getElementById('monthlyPayment').value);
+            const n = parseFloat(document.getElementById('term').value);
+            const yieldRate = parseFloat(document.getElementById('desiredYield').value);
+            const cocReturn = parseFloat(document.getElementById('desiredCocReturn').value);
+
+            console.log('Input values:', { upb, pmt, n, yieldRate, cocReturn });
+
+            const errorDiv = document.getElementById('error');
+            const resultsDiv = document.getElementById('results');
+
+            if (isNaN(upb) || isNaN(pmt) || isNaN(n) || isNaN(yieldRate) || isNaN(cocReturn)) {
+                errorDiv.textContent = 'Please enter valid numbers for all fields';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const yieldOffer = calculateYieldOffer(pmt, n, yieldRate);
+            const cocOffer = calculateCoCOffer(pmt, cocReturn);
+            
+            console.log('Calculated values:', { yieldOffer, cocOffer });
+
+            if (!yieldOffer || !cocOffer) {
+                errorDiv.textContent = 'Error in calculations. Please check your inputs.';
+                errorDiv.classList.remove('hidden');
+                return;
+            }
+
+            const recommendedOffer = Math.min(yieldOffer, cocOffer, upb);
+
+            resultsDiv.innerHTML = `
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <h3 class="text-lg font-semibold text-green-800">Recommended Offer Price</h3>
+                    <p class="text-2xl font-bold text-green-700">$${recommendedOffer.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    })}</p>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-4 mt-4">
+                    <div class="p-4 bg-blue-50 rounded-lg">
+                        <h3 class="text-sm font-semibold text-blue-800">Yield-Based Offer</h3>
+                        <p class="text-lg font-bold text-blue-700">$${yieldOffer.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}</p>
+                    </div>
+                    
+                    <div class="p-4 bg-purple-50 rounded-lg">
+                        <h3 class="text-sm font-semibold text-purple-800">Cash-on-Cash-Based Offer</h3>
+                        <p class="text-lg font-bold text-purple-700">$${cocOffer.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}</p>
+                    </div>
+
+                    <div class="p-4 bg-orange-50 rounded-lg">
+                        <h3 class="text-sm font-semibold text-orange-800">UPB (Maximum Offer)</h3>
+                        <p class="text-lg font-bold text-orange-700">$${upb.toLocaleString('en-US', {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                        })}</p>
+                    </div>
+                </div>
+            `;
+            
+            resultsDiv.classList.remove('hidden');
+            console.log('Results displayed');
+        });
+    </script>
+</body>
+</html>
