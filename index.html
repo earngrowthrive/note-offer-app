@@ -1,161 +1,812 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Note Calculator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        .hidden {
-            display: none;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Performing Note Offer Calculator | Wealth With Notes</title>
+  <meta name="description" content="Calculate maximum offer prices for performing notes based on your target yield. A teaching tool from Sierra Davis at Wealth With Notes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* Brand tokens. Match book.wealthwithnotes.com */
+    :root {
+      --brand-indigo: #0093DC;
+      --brand-indigo-dark: #0077B5;
+      --brand-bg: #F1F2F6;
+      --brand-light: #E8F4FB;
+      --brand-orange: #EAD225;
+      --brand-orange-dark: #D4BC1F;
+      --brand-text: #1A1A2E;
+      --brand-red: #DC2626;
+      --verdict-green: #10B981;
+      --verdict-blue: #2563EB;
+      --verdict-amber: #F59E0B;
+      --verdict-red: #DC2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--brand-text);
+      background-color: var(--brand-bg);
+      margin: 0;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Top banner */
+    .top-banner {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      text-align: center;
+      padding: 0.75rem 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    /* Hero header */
+    .hero {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      padding: 3rem 1.5rem 4rem;
+      text-align: center;
+    }
+    .hero-title {
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin: 0 0 0.5rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      margin: 0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Intro section */
+    .intro {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      padding: 0 1.5rem 4rem;
+    }
+    .intro-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .eyebrow {
+      color: var(--brand-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem;
+      text-align: center;
+    }
+    .intro h2 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 1.5rem;
+    }
+    .intro p {
+      font-size: 1rem;
+      line-height: 1.65;
+      margin: 0 0 1rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Calculator card */
+    .calculator-wrapper {
+      padding: 0 1rem 4rem;
+      background-color: var(--brand-indigo);
+    }
+    .calculator-card {
+      max-width: 640px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      padding: 2rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .calculator-card { padding: 2.5rem; }
+    }
+
+    .input-group {
+      margin-bottom: 1.75rem;
+    }
+    .input-group:last-of-type {
+      margin-bottom: 1rem;
+    }
+    .input-label {
+      display: block;
+      font-weight: 700;
+      color: var(--brand-indigo);
+      margin-bottom: 0.35rem;
+      font-size: 1rem;
+    }
+    .input-helper {
+      color: #555;
+      font-size: 0.85rem;
+      margin: 0 0 0.75rem;
+      line-height: 1.45;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper .prefix,
+    .input-wrapper .suffix {
+      position: absolute;
+      font-weight: 700;
+      color: #888;
+      pointer-events: none;
+    }
+    .input-wrapper .prefix { left: 1rem; }
+    .input-wrapper .suffix { right: 1rem; }
+    .input-wrapper input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: inherit;
+      border: 2px solid var(--brand-light);
+      border-radius: 8px;
+      color: var(--brand-text);
+      background: #fff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .input-wrapper.has-prefix input { padding-left: 1.75rem; }
+    .input-wrapper.has-suffix input { padding-right: 2rem; }
+    .input-wrapper input:focus {
+      outline: none;
+      border-color: var(--brand-indigo);
+      box-shadow: 0 0 0 3px rgba(0, 147, 220, 0.15);
+    }
+    .input-wrapper input.invalid {
+      border-color: var(--brand-red);
+    }
+    .what-is-this {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background: none;
+      border: none;
+      color: var(--brand-indigo-dark);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.25rem 0;
+      text-decoration: underline;
+    }
+    .what-is-this:hover { color: var(--brand-indigo); }
+    .what-is-this:focus {
+      outline: 2px solid var(--brand-indigo);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .explanation {
+      margin-top: 0.75rem;
+      padding: 1rem 1.25rem;
+      background: var(--brand-bg);
+      border-left: 3px solid var(--brand-indigo);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #444;
+    }
+    .explanation p { margin: 0; }
+
+    /* Calculate button */
+    .calculate-btn {
+      width: 100%;
+      min-height: 56px;
+      background: var(--brand-orange);
+      color: var(--brand-text);
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 1.125rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 12px rgba(234, 210, 37, 0.4);
+      margin-top: 1rem;
+    }
+    .calculate-btn:hover:not(:disabled) {
+      background: var(--brand-orange-dark);
+      box-shadow: 0 6px 16px rgba(234, 210, 37, 0.5);
+    }
+    .calculate-btn:active:not(:disabled) { transform: translateY(1px); }
+    .calculate-btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(234, 210, 37, 0.4);
+    }
+    .calculate-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Results */
+    #results {
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 4rem 1rem;
+      transition: opacity 0.3s ease;
+    }
+    #results[hidden] { display: none; }
+    #results.stale { opacity: 0.55; }
+    .stale-hint {
+      display: none;
+      text-align: center;
+      color: var(--brand-red);
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    #results.stale .stale-hint { display: block; }
+
+    .results-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      margin-bottom: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .results-card { padding: 2.5rem; }
+    }
+
+    .offer-label {
+      text-align: center;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem;
+    }
+    .offer-price {
+      text-align: center;
+      color: var(--brand-indigo);
+      font-weight: 900;
+      font-size: clamp(2.5rem, 8vw, 3.5rem);
+      letter-spacing: -0.02em;
+      margin: 0;
+      line-height: 1.05;
+    }
+    .offer-subtext {
+      text-align: center;
+      color: #555;
+      font-size: 0.95rem;
+      margin: 1rem 0 0;
+      line-height: 1.5;
+    }
+
+    .breakdown {
+      display: grid;
+      gap: 0.75rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--brand-light);
+      padding-top: 1.5rem;
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.5rem 0;
+      font-size: 0.95rem;
+    }
+    .breakdown-row .label { color: #555; }
+    .breakdown-row .value {
+      color: var(--brand-text);
+      font-weight: 700;
+      font-feature-settings: 'tnum';
+    }
+    .breakdown-row.profit .value { color: var(--brand-indigo); }
+
+    /* Callout boxes */
+    .callout {
+      border-radius: 12px;
+      padding: 1.5rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .callout-itv {
+      background: #FFFAF0;
+      border: 2px solid var(--brand-orange);
+    }
+    .callout-stress {
+      background: var(--brand-bg);
+      border: 1px solid var(--brand-light);
+    }
+    .callout h3 {
+      margin: 0 0 0.75rem;
+      color: var(--brand-indigo);
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .callout p {
+      margin: 0 0 1rem;
+      color: var(--brand-text);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .callout ul {
+      margin: 0 0 1rem;
+      padding-left: 1.25rem;
+    }
+    .callout ul li {
+      color: var(--brand-text);
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+    .callout .closing {
+      font-style: italic;
+      color: #555;
+    }
+
+    /* ITV property-value input within results */
+    .itv-input-group {
+      margin: 1rem 0;
+    }
+    .itv-input-group label {
+      display: block;
+      font-weight: 700;
+      color: var(--brand-indigo);
+      margin-bottom: 0.35rem;
+      font-size: 0.95rem;
+    }
+    .itv-verdict {
+      margin-top: 0.75rem;
+      padding: 0.75rem 1rem;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      display: none;
+    }
+    .itv-verdict.show { display: block; }
+    .itv-verdict .itv-pct { font-size: 1.1rem; margin-right: 0.5rem; }
+    .itv-verdict.green { background: rgba(16, 185, 129, 0.12); color: var(--verdict-green); }
+    .itv-verdict.blue { background: rgba(37, 99, 235, 0.12); color: var(--verdict-blue); }
+    .itv-verdict.amber { background: rgba(245, 158, 11, 0.15); color: #B45309; }
+    .itv-verdict.red { background: rgba(220, 38, 38, 0.12); color: var(--verdict-red); }
+
+    /* "What this calculator doesn't do" section */
+    .doesnt-do {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      padding: 4rem 1.5rem;
+    }
+    .doesnt-do-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .doesnt-do h2 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 1.5rem;
+    }
+    .doesnt-do p {
+      font-size: 1rem;
+      line-height: 1.65;
+      margin: 0 0 1.25rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .kevin-cta-wrapper {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .kevin-cta {
+      display: inline-block;
+      background: var(--brand-orange);
+      color: var(--brand-text);
+      padding: 1rem 1.75rem;
+      border-radius: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(234, 210, 37, 0.4);
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+      min-height: 44px;
+    }
+    .kevin-cta:hover {
+      background: var(--brand-orange-dark);
+      box-shadow: 0 6px 16px rgba(234, 210, 37, 0.5);
+    }
+    .affiliate-note {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.8rem;
+      font-style: italic;
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    .site-footer {
+      background-color: var(--brand-bg);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--brand-light);
+    }
+    .site-footer .back-link {
+      display: inline-block;
+      color: var(--brand-indigo);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    .site-footer .back-link:hover { color: var(--brand-indigo-dark); text-decoration: underline; }
+    .site-footer .copyright {
+      color: #666;
+      font-size: 0.85rem;
+      margin: 0 0 1rem;
+    }
+    .site-footer .disclaimer {
+      color: #777;
+      font-size: 0.75rem;
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Visually hidden but accessible to screen readers */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 p-4">
-    <div class="max-w-lg mx-auto bg-white rounded-lg shadow-md p-6">
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold mb-4">Note Offer Calculator</h1>
-            
-            <div class="bg-blue-50 p-4 rounded-lg mb-4">
-                <h2 class="font-semibold mb-2">How to Use This Calculator:</h2>
-                <ol class="list-decimal list-inside space-y-1 text-sm">
-                    <li>Enter the current Unpaid Principal Balance (UPB)</li>
-                    <li>Input the Monthly Payment amount</li>
-                    <li>Specify the remaining Term in months</li>
-                    <li>Enter your desired Annual Yield percentage</li>
-                    <li>Click "Calculate Offer" to see results</li>
-                </ol>
-            </div>
+<body>
 
-            <div class="bg-yellow-50 p-4 rounded-lg text-sm">
-                <p class="font-semibold mb-2">⚠️ Important Disclaimer:</p>
-                <p>This calculator is provided as a tool to assist in initial note evaluation only. Results should be verified using multiple methods. Always:</p>
-                <ul class="list-disc list-inside mt-2 space-y-1">
-                    <li>Perform thorough due diligence on any note investment</li>
-                    <li>Verify all numbers independently</li>
-                    <li>Consider consulting with financial and legal professionals</li>
-                    <li>Review all note documentation carefully</li>
-                    <li>Assess risks including but not limited to default, property condition, and title issues</li>
-                </ul>
-            </div>
+  <!-- SECTION 1: HEADER BANNER -->
+  <header>
+    <div class="top-banner">From Wealth With Notes</div>
+    <div class="hero">
+      <h1 class="hero-title">The Performing Note Offer Calculator</h1>
+      <p class="hero-subtitle">A teaching tool, not a final answer</p>
+    </div>
+  </header>
 
-        <form id="calculatorForm" class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">Unpaid Principal Balance (UPB)</label>
-                <input type="number" id="upb" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
-                       placeholder="e.g., 48000" step="0.01" required>
-            </div>
+  <!-- SECTION 2: HERO INTRO -->
+  <section class="intro">
+    <div class="intro-inner">
+      <p class="eyebrow">Before You Calculate</p>
+      <h2>What This Calculator Actually Does</h2>
+      <p>This calculator helps you figure out what to bid on a performing note based on the yield you want to earn. You enter the note's current terms, the yield you are targeting, and the calculator tells you the maximum price to pay to hit that yield.</p>
+      <p>It is a starting point, not a final answer. A real offer needs stress testing against worst-case scenarios, ITV verification against the property value, and a full review of the collateral file. This tool gives you the math. The rest of the work is yours.</p>
+    </div>
+  </section>
 
-            <div>
-                <label class="block text-sm font-medium mb-1">Monthly Payment</label>
-                <input type="number" id="monthlyPayment" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
-                       placeholder="e.g., 372.29" step="0.01" required>
-            </div>
+  <!-- SECTION 3 & 4: CALCULATOR FORM + CALCULATE BUTTON -->
+  <div class="calculator-wrapper">
+    <div class="calculator-card">
+      <form id="calc-form" novalidate>
 
-            <div>
-                <label class="block text-sm font-medium mb-1">Term (Months)</label>
-                <input type="number" id="term" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
-                       placeholder="e.g., 360" step="0.1" required>
-            </div>
-
-            <div>
-                <label class="block text-sm font-medium mb-1">Desired Annual Yield (%)</label>
-                <input type="number" id="desiredYield" class="w-full p-2 border rounded focus:ring-2 focus:ring-blue-500" 
-                       placeholder="e.g., 10" step="0.1" required>
-            </div>
-
-            <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-colors">
-                Calculate Offer
-            </button>
-        </form>
-
-        <div id="error" class="hidden mt-4 p-4 bg-red-50 rounded border border-red-500 text-red-700"></div>
-
-        <div id="results" class="mt-4 space-y-4">
-            <!-- Results will be inserted here -->
+        <div class="input-group">
+          <label class="input-label" for="upb">Unpaid Principal Balance (UPB)</label>
+          <p class="input-helper">What the borrower still owes on the loan today.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="upb" name="upb" min="0" step="0.01" inputmode="decimal" placeholder="48000" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="upb-explain" data-target="upb-explain">What is this?</button>
+          <div id="upb-explain" class="explanation" hidden>
+            <p>The UPB is the remaining balance the borrower owes. It is different from the original loan amount. Some payments have already been made, so the UPB is typically lower than what the loan started at. The seller of the note will list this number on the listing.</p>
+          </div>
         </div>
+
+        <div class="input-group">
+          <label class="input-label" for="pmt">Monthly Payment Amount</label>
+          <p class="input-helper">What the borrower pays every month, including principal and interest only. Do not include escrow for taxes and insurance.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="pmt" name="pmt" min="0" step="0.01" inputmode="decimal" placeholder="372.29" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="pmt-explain" data-target="pmt-explain">What is this?</button>
+          <div id="pmt-explain" class="explanation" hidden>
+            <p>Performing notes pay a fixed amount each month based on the loan's original terms. Enter only the principal and interest portion. If the seller's listing includes escrow, subtract that before entering this number.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="term">Remaining Term</label>
+          <p class="input-helper">How many months of payments are left on the loan.</p>
+          <div class="input-wrapper has-suffix">
+            <input type="number" id="term" name="term" min="0" step="1" inputmode="numeric" placeholder="300" autocomplete="off">
+            <span class="suffix" aria-hidden="true">mo</span>
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="term-explain" data-target="term-explain">What is this?</button>
+          <div id="term-explain" class="explanation" hidden>
+            <p>The remaining term is the number of monthly payments still owed by the borrower. A 30-year mortgage that has been paying for 5 years has 300 months remaining. Shorter remaining terms mean faster payoff but lower total interest collected.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="yield">Desired Annual Yield</label>
+          <p class="input-helper">The yield you want to earn on your investment, as a percentage. Common targets range from 8% (conservative) to 13%+ (higher risk).</p>
+          <div class="input-wrapper has-suffix">
+            <input type="number" id="yield" name="yield" min="0" step="0.01" inputmode="decimal" placeholder="12" autocomplete="off">
+            <span class="suffix" aria-hidden="true">%</span>
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="yield-explain" data-target="yield-explain">What is this?</button>
+          <div id="yield-explain" class="explanation" hidden>
+            <p>Yield is what your money earns annually on this investment. A 12% yield means for every $1,000 you invest, you earn roughly $120 per year. Higher yields mean lower offer prices but also signal that the seller may be pricing in more risk. Stay anchored to what is realistic for the risk profile you want.</p>
+          </div>
+        </div>
+
+        <button type="submit" id="calculate" class="calculate-btn" disabled>Calculate My Offer</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SECTION 5: RESULTS (hidden until calculate is clicked) -->
+  <section id="results" hidden aria-live="polite">
+    <p class="stale-hint">Inputs changed. Click Calculate again to refresh these numbers.</p>
+
+    <!-- 5a + 5b: Offer price + breakdown -->
+    <div class="results-card">
+      <p class="offer-label">Your Maximum Offer Price</p>
+      <p class="offer-price" id="offer-price">$0.00</p>
+      <p class="offer-subtext">This is the price that gets you your target yield based on the inputs above.</p>
+
+      <div class="breakdown">
+        <div class="breakdown-row">
+          <span class="label">UPB you entered</span>
+          <span class="value" id="bd-upb">$0.00</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="label">Discount from UPB</span>
+          <span class="value" id="bd-discount">$0.00 (0.0%)</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="label">Total payments you will collect over the remaining term</span>
+          <span class="value" id="bd-total-payments">$0.00</span>
+        </div>
+        <div class="breakdown-row profit">
+          <span class="label">Total profit if all payments come in</span>
+          <span class="value" id="bd-profit">$0.00</span>
+        </div>
+      </div>
     </div>
 
-    <script>
-        function calculateYieldOffer(pmt, n, r) {
-            try {
-                const i = r / 12 / 100;
-                const presentValue = -pmt * (1 - Math.pow(1 + i, -n)) / i;
-                return Math.round(Math.abs(presentValue) * 100) / 100;
-            } catch (err) {
-                console.error('Yield calculation error:', err);
-                return null;
-            }
-        }
+    <!-- 5c: ITV check callout -->
+    <div class="callout callout-itv">
+      <h3>One More Check Before You Bid</h3>
+      <p>The calculator gives you the price for your target yield. It does not check ITV (Investment-to-Value). Before you submit an offer, calculate ITV by dividing your offer price by the property's value. The rule from the buy box framework: stay at or below 75% ITV. Lower is better.</p>
+      <div class="itv-input-group">
+        <label for="property-value">Property Value</label>
+        <div class="input-wrapper has-prefix">
+          <span class="prefix" aria-hidden="true">$</span>
+          <input type="number" id="property-value" min="0" step="0.01" inputmode="decimal" placeholder="65000" autocomplete="off">
+        </div>
+        <div id="itv-verdict" class="itv-verdict" aria-live="polite"></div>
+      </div>
+    </div>
 
-        document.getElementById('calculatorForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            console.log('Form submitted');
-            
-            const upb = parseFloat(document.getElementById('upb').value);
-            const pmt = parseFloat(document.getElementById('monthlyPayment').value);
-            const n = parseFloat(document.getElementById('term').value);
-            const yieldRate = parseFloat(document.getElementById('desiredYield').value);
+    <!-- 5d: Stress test callout -->
+    <div class="callout callout-stress">
+      <h3>Stress Test This Number</h3>
+      <p>Your offer price assumes the borrower keeps paying. Here is what to consider before submitting it:</p>
+      <ul>
+        <li>What if three payments are missed in the next 12 months?</li>
+        <li>What if the property sells for 15% less than the current valuation?</li>
+        <li>What if foreclosure becomes necessary? Look up the timeline and legal costs in this property's state.</li>
+        <li>What if you have to hold longer than you planned? Does that still work for your portfolio?</li>
+      </ul>
+      <p class="closing">If the math still works under each of these stress scenarios, the offer is solid. If not, lower your bid or pass on the deal.</p>
+    </div>
+  </section>
 
-            console.log('Input values:', { upb, pmt, n, yieldRate });
+  <!-- SECTION 6: WHAT THIS CALCULATOR DOESN'T DO -->
+  <section class="doesnt-do">
+    <div class="doesnt-do-inner">
+      <h2>What This Calculator Doesn't Do</h2>
+      <p>This tool gives you the math for a single offer based on the inputs you provide. It does not evaluate the borrower's payment history. It does not assess the property's condition or location. It does not verify the chain of title or the assignment paperwork. It does not catch second liens, unpaid taxes, or code violations. Those skills are how you turn a calculator number into a real, defensible offer.</p>
+      <p>The structured training I personally recommend for those skills is Kevin Shortle's mentorship program. Kevin has walked collateral files with me deal by deal and helped me develop the discipline to evaluate performing notes beyond what any calculator can show.</p>
+      <div class="kevin-cta-wrapper">
+        <a class="kevin-cta" href="https://learn.kevinshortle.com/a/2147901237/kyXPLotM" target="_blank" rel="noopener noreferrer">
+          Learn About Kevin's Mentorship
+        </a>
+        <p class="affiliate-note">Full disclosure: I'm an affiliate of Kevin's program. I recommend it because of how it shaped my own investing.</p>
+      </div>
+    </div>
+  </section>
 
-            const errorDiv = document.getElementById('error');
-            const resultsDiv = document.getElementById('results');
+  <!-- SECTION 7: FOOTER -->
+  <footer class="site-footer">
+    <a class="back-link" href="https://book.wealthwithnotes.com">&larr; Back to Wealth With Notes</a>
+    <p class="copyright">&copy; 2026 Earn Grow Thrive LLC dba Wealth With Notes</p>
+    <p class="disclaimer">This calculator is for educational purposes only. It is not investment, legal, or financial advice. Performing note investing involves risk including loss of principal. Always perform full due diligence and consult licensed professionals before making investment decisions.</p>
+  </footer>
 
-            if (isNaN(upb) || isNaN(pmt) || isNaN(n) || isNaN(yieldRate)) {
-                errorDiv.textContent = 'Please enter valid numbers for all fields';
-                errorDiv.classList.remove('hidden');
-                return;
-            }
+  <script>
+    (function () {
+      'use strict';
 
-            const yieldOffer = calculateYieldOffer(pmt, n, yieldRate);
-            
-            console.log('Calculated values:', { yieldOffer });
+      // ── Math ──────────────────────────────────────────────────────────
+      function calculateOfferPrice(pmt, n, annualYield) {
+        var monthlyRate = (annualYield / 100) / 12;
+        if (monthlyRate === 0) return pmt * n;
+        return pmt * ((1 - Math.pow(1 + monthlyRate, -n)) / monthlyRate);
+      }
 
-            if (!yieldOffer) {
-                errorDiv.textContent = 'Error in calculations. Please check your inputs.';
-                errorDiv.classList.remove('hidden');
-                return;
-            }
+      // ── Formatters ────────────────────────────────────────────────────
+      var currencyFmt = new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
+      function fmt$(n) { return currencyFmt.format(n); }
+      function fmtPct(n, decimals) {
+        if (decimals === undefined) decimals = 1;
+        return n.toFixed(decimals) + '%';
+      }
 
-            const recommendedOffer = Math.min(yieldOffer, upb);
+      // ── DOM refs ─────────────────────────────────────────────────────
+      var form = document.getElementById('calc-form');
+      var inputs = {
+        upb: document.getElementById('upb'),
+        pmt: document.getElementById('pmt'),
+        term: document.getElementById('term'),
+        yield: document.getElementById('yield')
+      };
+      var calcBtn = document.getElementById('calculate');
+      var resultsSection = document.getElementById('results');
+      var offerPriceEl = document.getElementById('offer-price');
+      var bdUpb = document.getElementById('bd-upb');
+      var bdDiscount = document.getElementById('bd-discount');
+      var bdTotalPayments = document.getElementById('bd-total-payments');
+      var bdProfit = document.getElementById('bd-profit');
+      var propertyValueInput = document.getElementById('property-value');
+      var itvVerdictEl = document.getElementById('itv-verdict');
 
-            resultsDiv.innerHTML = `
-                <div class="p-4 bg-green-50 rounded-lg">
-                    <h3 class="text-lg font-semibold text-green-800">Recommended Offer Price</h3>
-                    <p class="mt-2 text-sm text-green-600">
-                        This is the lower of: yield-based offer and UPB,
-                        ensuring your return requirement is met while not exceeding the UPB.
-                    </p>
-                    <p class="text-2xl font-bold text-green-700">$${recommendedOffer.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    })}</p>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4 mt-4">
-                    <div class="p-4 bg-blue-50 rounded-lg">
-                        <h3 class="text-sm font-semibold text-blue-800">Yield-Based Offer</h3>
-                        <p class="text-lg font-bold text-blue-700">$${yieldOffer.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })}</p>
-                    </div>
+      var lastOfferPrice = 0;
+      var hasCalculated = false;
 
-                    <div class="p-4 bg-orange-50 rounded-lg">
-                        <h3 class="text-sm font-semibold text-orange-800">UPB (Maximum Offer)</h3>
-                        <p class="text-lg font-bold text-orange-700">$${upb.toLocaleString('en-US', {
-                            minimumFractionDigits: 2,
-                            maximumFractionDigits: 2
-                        })}</p>
-                    </div>
-                </div>
-            `;
-            
-            resultsDiv.classList.remove('hidden');
-            errorDiv.classList.add('hidden');
-            console.log('Results displayed');
+      // ── Input validation + Calculate button state ────────────────────
+      function isValid(input) {
+        var v = parseFloat(input.value);
+        return !isNaN(v) && v > 0 && isFinite(v);
+      }
+      function refreshButton() {
+        var ok = isValid(inputs.upb) && isValid(inputs.pmt) && isValid(inputs.term) && isValid(inputs.yield);
+        calcBtn.disabled = !ok;
+      }
+      Object.keys(inputs).forEach(function (key) {
+        inputs[key].addEventListener('input', function () {
+          var raw = this.value;
+          if (raw && (parseFloat(raw) < 0 || isNaN(parseFloat(raw)))) {
+            this.classList.add('invalid');
+          } else {
+            this.classList.remove('invalid');
+          }
+          refreshButton();
+          // Mark results stale if already calculated
+          if (hasCalculated) resultsSection.classList.add('stale');
         });
-    </script>
+      });
+
+      // ── "What is this?" toggles (only one open at a time) ────────────
+      var toggles = document.querySelectorAll('.what-is-this');
+      toggles.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var targetId = btn.getAttribute('data-target');
+          var panel = document.getElementById(targetId);
+          var isOpen = !panel.hasAttribute('hidden');
+          // Close all
+          toggles.forEach(function (b) {
+            var pid = b.getAttribute('data-target');
+            var p = document.getElementById(pid);
+            p.setAttribute('hidden', '');
+            b.setAttribute('aria-expanded', 'false');
+            b.textContent = 'What is this?';
+          });
+          // Open this one if it wasn't already open
+          if (!isOpen) {
+            panel.removeAttribute('hidden');
+            btn.setAttribute('aria-expanded', 'true');
+            btn.textContent = 'Close';
+          }
+        });
+      });
+
+      // ── Calculate ─────────────────────────────────────────────────────
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (calcBtn.disabled) return;
+
+        var upb = parseFloat(inputs.upb.value);
+        var pmt = parseFloat(inputs.pmt.value);
+        var n = parseFloat(inputs.term.value);
+        var yieldVal = parseFloat(inputs.yield.value);
+
+        var offer = calculateOfferPrice(pmt, n, yieldVal);
+        var discount = upb - offer;
+        var discountPct = (discount / upb) * 100;
+        var totalPayments = pmt * n;
+        var profit = totalPayments - offer;
+
+        lastOfferPrice = offer;
+        hasCalculated = true;
+
+        offerPriceEl.textContent = fmt$(offer);
+        bdUpb.textContent = fmt$(upb);
+        bdDiscount.textContent = fmt$(discount) + ' (' + fmtPct(discountPct) + ')';
+        bdTotalPayments.textContent = fmt$(totalPayments);
+        bdProfit.textContent = fmt$(profit);
+
+        resultsSection.removeAttribute('hidden');
+        resultsSection.classList.remove('stale');
+
+        // Recompute ITV if the user already entered a property value
+        recomputeITV();
+
+        // Smooth scroll into view
+        setTimeout(function () {
+          resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+      });
+
+      // ── ITV (live as the user types) ─────────────────────────────────
+      function recomputeITV() {
+        var pv = parseFloat(propertyValueInput.value);
+        if (!hasCalculated || isNaN(pv) || pv <= 0) {
+          itvVerdictEl.classList.remove('show', 'green', 'blue', 'amber', 'red');
+          itvVerdictEl.textContent = '';
+          return;
+        }
+        var itv = (lastOfferPrice / pv) * 100;
+        var verdict, colorClass;
+        if (itv <= 50) {
+          verdict = 'Conservative. Strong protection.';
+          colorClass = 'green';
+        } else if (itv <= 65) {
+          verdict = 'Comfortable. Solid protection.';
+          colorClass = 'blue';
+        } else if (itv <= 75) {
+          verdict = 'At the line. Acceptable maximum.';
+          colorClass = 'amber';
+        } else {
+          verdict = 'Margin is too thin. Reconsider this offer.';
+          colorClass = 'red';
+        }
+        itvVerdictEl.classList.remove('green', 'blue', 'amber', 'red');
+        itvVerdictEl.classList.add('show', colorClass);
+        itvVerdictEl.innerHTML = '<span class="itv-pct">ITV: ' + fmtPct(itv) + '</span>' + verdict;
+      }
+      propertyValueInput.addEventListener('input', recomputeITV);
+
+      // ── Initial state ────────────────────────────────────────────────
+      refreshButton();
+    })();
+  </script>
 </body>
 </html>
