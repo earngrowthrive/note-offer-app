@@ -1,9 +1,10 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/",
+      "src": "^/$",
       "has": [{ "type": "host", "value": "nonperforming.wealthwithnotes.com" }],
-      "destination": "/non-performing.html"
-    }
+      "dest": "/non-performing.html"
+    },
+    { "handle": "filesystem" }
   ]
 }
