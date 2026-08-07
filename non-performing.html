@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Non-Performing Note Offer Calculator | Wealth With Notes</title>
+  <meta name="description" content="Calculate maximum offer prices for non-performing notes based on the foreclosure exit, your state's process, and your target return. A teaching tool from Sierra Davis at Wealth With Notes.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* Brand tokens. Match book.wealthwithnotes.com */
+    :root {
+      --brand-indigo: #0093DC;
+      --brand-indigo-dark: #0077B5;
+      --brand-bg: #F1F2F6;
+      --brand-light: #E8F4FB;
+      --brand-orange: #EAD225;
+      --brand-orange-dark: #D4BC1F;
+      --brand-text: #1A1A2E;
+      --brand-red: #DC2626;
+      --verdict-green: #10B981;
+      --verdict-blue: #2563EB;
+      --verdict-amber: #F59E0B;
+      --verdict-red: #DC2626;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--brand-text);
+      background-color: var(--brand-bg);
+      margin: 0;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* Top banner */
+    .top-banner {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      text-align: center;
+      padding: 0.75rem 1rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      font-size: 0.85rem;
+    }
+
+    /* Hero header */
+    .hero {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      padding: 3rem 1.5rem 4rem;
+      text-align: center;
+    }
+    .hero-title {
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      font-weight: 900;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+      margin: 0 0 0.5rem;
+    }
+    .hero-subtitle {
+      font-size: 1rem;
+      color: rgba(255, 255, 255, 0.8);
+      font-weight: 500;
+      margin: 0;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    /* Intro section */
+    .intro {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      padding: 0 1.5rem 4rem;
+    }
+    .intro-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .eyebrow {
+      color: var(--brand-orange);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 800;
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem;
+      text-align: center;
+    }
+    .intro h2 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 1.5rem;
+    }
+    .intro p {
+      font-size: 1rem;
+      line-height: 1.65;
+      margin: 0 0 1rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+
+    /* Calculator card */
+    .calculator-wrapper {
+      padding: 0 1rem 4rem;
+      background-color: var(--brand-indigo);
+    }
+    .calculator-card {
+      max-width: 680px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      padding: 2rem 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .calculator-card { padding: 2.5rem; }
+    }
+
+    .form-section-title {
+      color: var(--brand-indigo-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      font-size: 0.8rem;
+      margin: 0 0 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--brand-light);
+    }
+    .form-section-title:not(:first-child) { margin-top: 2.25rem; }
+
+    .input-group {
+      margin-bottom: 1.75rem;
+    }
+    .input-label {
+      display: block;
+      font-weight: 700;
+      color: var(--brand-indigo);
+      margin-bottom: 0.35rem;
+      font-size: 1rem;
+    }
+    .input-helper {
+      color: #555;
+      font-size: 0.85rem;
+      margin: 0 0 0.75rem;
+      line-height: 1.45;
+    }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+    .input-wrapper .prefix,
+    .input-wrapper .suffix {
+      position: absolute;
+      font-weight: 700;
+      color: #888;
+      pointer-events: none;
+    }
+    .input-wrapper .prefix { left: 1rem; }
+    .input-wrapper .suffix { right: 1rem; }
+    .input-wrapper input,
+    .input-wrapper select {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      font-family: inherit;
+      border: 2px solid var(--brand-light);
+      border-radius: 8px;
+      color: var(--brand-text);
+      background: #fff;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .input-wrapper.has-prefix input { padding-left: 1.75rem; }
+    .input-wrapper.has-suffix input { padding-right: 2rem; }
+    .input-wrapper input:focus,
+    .input-wrapper select:focus {
+      outline: none;
+      border-color: var(--brand-indigo);
+      box-shadow: 0 0 0 3px rgba(0, 147, 220, 0.15);
+    }
+    .input-wrapper input.invalid {
+      border-color: var(--brand-red);
+    }
+    .what-is-this {
+      display: inline-block;
+      margin-top: 0.5rem;
+      background: none;
+      border: none;
+      color: var(--brand-indigo-dark);
+      font-family: inherit;
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.25rem 0;
+      text-decoration: underline;
+    }
+    .what-is-this:hover { color: var(--brand-indigo); }
+    .what-is-this:focus {
+      outline: 2px solid var(--brand-indigo);
+      outline-offset: 2px;
+      border-radius: 2px;
+    }
+    .explanation {
+      margin-top: 0.75rem;
+      padding: 1rem 1.25rem;
+      background: var(--brand-bg);
+      border-left: 3px solid var(--brand-indigo);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #444;
+    }
+    .explanation p { margin: 0; }
+
+    /* State info card */
+    .state-card {
+      margin-top: 0.85rem;
+      border: 2px solid var(--brand-light);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      background: var(--brand-bg);
+    }
+    .state-card[hidden] { display: none; }
+    .state-card-title {
+      font-weight: 800;
+      color: var(--brand-indigo-dark);
+      font-size: 0.9rem;
+      margin: 0 0 0.6rem;
+    }
+    .state-fact {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding: 0.3rem 0;
+      font-size: 0.88rem;
+      border-bottom: 1px dashed #d8dae2;
+    }
+    .state-fact:last-of-type { border-bottom: none; }
+    .state-fact .k { color: #555; }
+    .state-fact .v { font-weight: 700; color: var(--brand-text); text-align: right; }
+    .state-card-note {
+      margin: 0.6rem 0 0;
+      font-size: 0.78rem;
+      color: #666;
+      line-height: 1.5;
+      font-style: italic;
+    }
+
+    /* Advanced assumptions */
+    .advanced-toggle {
+      width: 100%;
+      background: var(--brand-bg);
+      border: 2px solid var(--brand-light);
+      border-radius: 10px;
+      padding: 0.85rem 1.25rem;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--brand-indigo-dark);
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 0.5rem 0 1rem;
+    }
+    .advanced-toggle:hover { border-color: var(--brand-indigo); }
+    .advanced-toggle .chevron { transition: transform 0.2s ease; }
+    .advanced-toggle[aria-expanded="true"] .chevron { transform: rotate(180deg); }
+    .advanced-panel {
+      border: 2px solid var(--brand-light);
+      border-radius: 10px;
+      padding: 1.5rem 1.25rem 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .advanced-panel[hidden] { display: none; }
+    .advanced-note {
+      font-size: 0.85rem;
+      color: #555;
+      margin: 0 0 1.25rem;
+      line-height: 1.5;
+    }
+    .adv-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 0 1.25rem;
+    }
+    @media (min-width: 560px) {
+      .adv-grid { grid-template-columns: 1fr 1fr; }
+    }
+    .adv-group { margin-bottom: 1.15rem; }
+    .adv-group label {
+      display: block;
+      font-weight: 600;
+      color: var(--brand-text);
+      font-size: 0.85rem;
+      margin-bottom: 0.3rem;
+      line-height: 1.35;
+    }
+    .adv-group .input-wrapper input {
+      padding: 0.55rem 0.9rem;
+      font-size: 0.95rem;
+    }
+    .adv-group .input-wrapper.has-prefix input { padding-left: 1.6rem; }
+    .adv-group .input-wrapper.has-suffix input { padding-right: 2.4rem; }
+    .adv-group .input-wrapper .prefix { left: 0.85rem; font-size: 0.9rem; }
+    .adv-group .input-wrapper .suffix { right: 0.85rem; font-size: 0.8rem; }
+    .adv-section {
+      grid-column: 1 / -1;
+      color: var(--brand-indigo-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      font-size: 0.72rem;
+      margin: 0.5rem 0 0.75rem;
+    }
+
+    /* Calculate button */
+    .calculate-btn {
+      width: 100%;
+      min-height: 56px;
+      background: var(--brand-orange);
+      color: var(--brand-text);
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 1.125rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      border: none;
+      border-radius: 10px;
+      padding: 1rem 1.5rem;
+      cursor: pointer;
+      transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+      box-shadow: 0 4px 12px rgba(234, 210, 37, 0.4);
+      margin-top: 1rem;
+    }
+    .calculate-btn:hover:not(:disabled) {
+      background: var(--brand-orange-dark);
+      box-shadow: 0 6px 16px rgba(234, 210, 37, 0.5);
+    }
+    .calculate-btn:active:not(:disabled) { transform: translateY(1px); }
+    .calculate-btn:focus {
+      outline: none;
+      box-shadow: 0 0 0 4px rgba(234, 210, 37, 0.4);
+    }
+    .calculate-btn:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    /* Results */
+    #results {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 4rem 1rem;
+      transition: opacity 0.3s ease;
+    }
+    #results[hidden] { display: none; }
+    #results.stale { opacity: 0.55; }
+    .stale-hint {
+      display: none;
+      text-align: center;
+      color: var(--brand-red);
+      font-weight: 600;
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    #results.stale .stale-hint { display: block; }
+
+    .results-card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+      margin-bottom: 1.5rem;
+    }
+    @media (min-width: 640px) {
+      .results-card { padding: 2.5rem; }
+    }
+
+    .offer-label {
+      text-align: center;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin: 0 0 0.5rem;
+    }
+    .offer-price {
+      text-align: center;
+      color: var(--brand-indigo);
+      font-weight: 900;
+      font-size: clamp(2.5rem, 8vw, 3.5rem);
+      letter-spacing: -0.02em;
+      margin: 0;
+      line-height: 1.05;
+    }
+    .offer-subtext {
+      text-align: center;
+      color: #555;
+      font-size: 0.95rem;
+      margin: 1rem 0 0;
+      line-height: 1.5;
+    }
+
+    /* Metric chips */
+    .metric-chips {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+      margin-top: 1.75rem;
+    }
+    @media (min-width: 560px) {
+      .metric-chips { grid-template-columns: repeat(4, 1fr); }
+    }
+    .metric-chip {
+      background: var(--brand-bg);
+      border-radius: 10px;
+      padding: 0.85rem 0.75rem;
+      text-align: center;
+    }
+    .metric-chip .metric-value {
+      font-weight: 800;
+      font-size: 1.15rem;
+      color: var(--brand-text);
+      font-feature-settings: 'tnum';
+    }
+    .metric-chip .metric-label {
+      font-size: 0.72rem;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      font-weight: 600;
+      margin-top: 0.15rem;
+      line-height: 1.3;
+    }
+    .metric-chip.green .metric-value { color: var(--verdict-green); }
+    .metric-chip.blue .metric-value { color: var(--verdict-blue); }
+    .metric-chip.amber .metric-value { color: #B45309; }
+    .metric-chip.red .metric-value { color: var(--verdict-red); }
+
+    .breakdown {
+      display: grid;
+      gap: 0.5rem;
+      margin-top: 2rem;
+      border-top: 1px solid var(--brand-light);
+      padding-top: 1.5rem;
+    }
+    .breakdown h3 {
+      margin: 0 0 0.5rem;
+      color: var(--brand-indigo);
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+    .breakdown-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 1rem;
+      padding: 0.4rem 0;
+      font-size: 0.95rem;
+    }
+    .breakdown-row .label { color: #555; }
+    .breakdown-row .value {
+      color: var(--brand-text);
+      font-weight: 700;
+      font-feature-settings: 'tnum';
+      white-space: nowrap;
+    }
+    .breakdown-row.profit {
+      border-top: 1px solid var(--brand-light);
+      margin-top: 0.35rem;
+      padding-top: 0.75rem;
+    }
+    .breakdown-row.profit .value { color: var(--brand-indigo); }
+    .cap-note {
+      margin: 0.75rem 0 0;
+      padding: 0.75rem 1rem;
+      background: rgba(245, 158, 11, 0.12);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      color: #92400E;
+      line-height: 1.5;
+    }
+    .cap-note[hidden] { display: none; }
+
+    /* Offer tables */
+    .offer-table-wrap { overflow-x: auto; margin-top: 1rem; }
+    table.offer-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    table.offer-table th {
+      text-align: right;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--brand-light);
+    }
+    table.offer-table th:first-child { text-align: left; }
+    table.offer-table td {
+      text-align: right;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--brand-bg);
+      font-feature-settings: 'tnum';
+      white-space: nowrap;
+    }
+    table.offer-table td:first-child { text-align: left; font-weight: 700; color: var(--brand-indigo-dark); }
+    table.offer-table tr.highlight td {
+      background: var(--brand-light);
+      font-weight: 700;
+    }
+    .table-caption {
+      font-size: 0.85rem;
+      color: #555;
+      margin: 0.75rem 0 0;
+      line-height: 1.5;
+    }
+
+    /* Callout boxes */
+    .callout {
+      border-radius: 12px;
+      padding: 1.5rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .callout-stress {
+      background: var(--brand-bg);
+      border: 1px solid var(--brand-light);
+    }
+    .callout h3 {
+      margin: 0 0 0.75rem;
+      color: var(--brand-indigo);
+      font-size: 1.15rem;
+      font-weight: 800;
+    }
+    .callout p {
+      margin: 0 0 1rem;
+      color: var(--brand-text);
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .callout p:last-child { margin-bottom: 0; }
+    .callout ul {
+      margin: 0 0 1rem;
+      padding-left: 1.25rem;
+    }
+    .callout ul li {
+      color: var(--brand-text);
+      margin-bottom: 0.5rem;
+      line-height: 1.5;
+      font-size: 0.95rem;
+    }
+    .callout .closing {
+      font-style: italic;
+      color: #555;
+    }
+
+    /* "What this calculator doesn't do" section */
+    .doesnt-do {
+      background-color: var(--brand-indigo);
+      color: #fff;
+      padding: 4rem 1.5rem;
+    }
+    .doesnt-do-inner {
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .doesnt-do h2 {
+      font-size: clamp(1.5rem, 4vw, 2.25rem);
+      font-weight: 900;
+      text-align: center;
+      letter-spacing: -0.02em;
+      line-height: 1.2;
+      margin: 0 0 1.5rem;
+    }
+    .doesnt-do p {
+      font-size: 1rem;
+      line-height: 1.65;
+      margin: 0 0 1.25rem;
+      color: rgba(255, 255, 255, 0.9);
+    }
+    .kevin-cta-wrapper {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .kevin-cta {
+      display: inline-block;
+      background: var(--brand-orange);
+      color: var(--brand-text);
+      padding: 1rem 1.75rem;
+      border-radius: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(234, 210, 37, 0.4);
+      transition: background-color 0.15s ease, box-shadow 0.15s ease;
+      min-height: 44px;
+    }
+    .kevin-cta:hover {
+      background: var(--brand-orange-dark);
+      box-shadow: 0 6px 16px rgba(234, 210, 37, 0.5);
+    }
+    .affiliate-note {
+      text-align: center;
+      color: rgba(255, 255, 255, 0.75);
+      font-size: 0.8rem;
+      font-style: italic;
+      margin-top: 0.75rem;
+      line-height: 1.5;
+    }
+
+    /* Footer */
+    .site-footer {
+      background-color: var(--brand-bg);
+      padding: 2.5rem 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--brand-light);
+    }
+    .site-footer .back-link {
+      display: inline-block;
+      color: var(--brand-indigo);
+      font-weight: 600;
+      text-decoration: none;
+      font-size: 0.95rem;
+      margin-bottom: 1rem;
+    }
+    .site-footer .back-link:hover { color: var(--brand-indigo-dark); text-decoration: underline; }
+    .site-footer .copyright {
+      color: #666;
+      font-size: 0.85rem;
+      margin: 0 0 1rem;
+    }
+    .site-footer .disclaimer {
+      color: #777;
+      font-size: 0.75rem;
+      max-width: 640px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* Visually hidden but accessible to screen readers */
+    .sr-only {
+      position: absolute;
+      width: 1px; height: 1px;
+      padding: 0; margin: -1px;
+      overflow: hidden; clip: rect(0,0,0,0);
+      white-space: nowrap; border: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SECTION 1: HEADER BANNER -->
+  <header>
+    <div class="top-banner">From Wealth With Notes</div>
+    <div class="hero">
+      <h1 class="hero-title">The Non-Performing Note Offer Calculator</h1>
+      <p class="hero-subtitle">Price the worst case first</p>
+    </div>
+  </header>
+
+  <!-- SECTION 2: HERO INTRO -->
+  <section class="intro">
+    <div class="intro-inner">
+      <p class="eyebrow">Before You Calculate</p>
+      <h2>What This Calculator Actually Does</h2>
+      <p>A non-performing note has no payments coming in, so you cannot price it off a payment stream. You price it off the exit. This calculator models the path you have to be prepared for: foreclose, take the property, and sell it.</p>
+      <p>You enter the note's terms, the property's value and state, and the annual return you are targeting. The state sets the foreclosure process and timeline. The calculator then builds a month-by-month cash flow for that path (insurance, servicing, legal costs, then the property sale) and tells you the maximum price you can pay and still hit your target return. If the borrower starts paying again instead, that is a bonus. Never price a non-performing note as if the bonus is guaranteed.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 3 & 4: CALCULATOR FORM + CALCULATE BUTTON -->
+  <div class="calculator-wrapper">
+    <div class="calculator-card">
+      <form id="calc-form" novalidate>
+
+        <p class="form-section-title">The Note</p>
+
+        <div class="input-group">
+          <label class="input-label" for="upb">Unpaid Principal Balance (UPB)</label>
+          <p class="input-helper">What the borrower still owes on the loan today.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="upb" name="upb" min="0" step="0.01" inputmode="decimal" placeholder="129050" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="upb-explain" data-target="upb-explain">What is this?</button>
+          <div id="upb-explain" class="explanation" hidden>
+            <p>The UPB is the remaining principal the borrower owes, not the original loan amount. On a non-performing note it stopped shrinking when the payments stopped. The seller's tape will list this number.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="pmt">Monthly P&amp;I Payment</label>
+          <p class="input-helper">The contractual monthly payment, principal and interest only. No escrow.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="pmt" name="pmt" min="0" step="0.01" inputmode="decimal" placeholder="1883.15" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="pmt-explain" data-target="pmt-explain">What is this?</button>
+          <div id="pmt-explain" class="explanation" hidden>
+            <p>Even though nobody is paying it right now, the contractual payment still matters for your file. It anchors the arrears math (months behind times the payment is a quick estimate) and it is what the loan pays if the borrower ever reinstates.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="rate">Annual Interest Rate</label>
+          <p class="input-helper">The note's contractual interest rate.</p>
+          <div class="input-wrapper has-suffix">
+            <input type="number" id="rate" name="rate" min="0" max="30" step="0.01" inputmode="decimal" placeholder="10" autocomplete="off">
+            <span class="suffix" aria-hidden="true">%</span>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="arrears">Accrued Interest, Late Fees &amp; Advances</label>
+          <p class="input-helper">Everything owed on top of the UPB. A quick estimate: months behind times the monthly payment, plus any servicer advances. Leave at 0 if you don't have it yet.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="arrears" name="arrears" min="0" step="0.01" inputmode="decimal" value="0" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="arrears-explain" data-target="arrears-explain">What is this?</button>
+          <div id="arrears-explain" class="explanation" hidden>
+            <p>Missed interest, late fees, and money the current lender advanced for taxes or insurance. Added to the UPB, this is the total payoff, which is the most you can legally collect from a foreclosure sale. If the property sells for more than the payoff plus your recoverable costs, the surplus is not yours.</p>
+          </div>
+        </div>
+
+        <p class="form-section-title">The Property &amp; State</p>
+
+        <div class="input-group">
+          <label class="input-label" for="state">State</label>
+          <p class="input-helper">Where the property sits. The state determines the foreclosure process, how long it takes, and what rights the borrower keeps after the sale.</p>
+          <div class="input-wrapper">
+            <select id="state" name="state">
+              <option value="" selected>Select a state...</option>
+            </select>
+          </div>
+          <div class="state-card" id="state-card" hidden>
+            <p class="state-card-title" id="sc-title">State process</p>
+            <div class="state-fact"><span class="k">Foreclosure process</span><span class="v" id="sc-process"></span></div>
+            <div class="state-fact"><span class="k">Typical time to foreclose</span><span class="v" id="sc-months"></span></div>
+            <div class="state-fact"><span class="k">Redemption period after sale</span><span class="v" id="sc-redemption"></span></div>
+            <div class="state-fact"><span class="k">Statute of limitations on the note</span><span class="v" id="sc-sol"></span></div>
+            <p class="state-card-note">Rough guides only, and laws change. Verify with local counsel before you bid. The calculator sets the months-to-foreclose assumption below to the high end plus one extra month. Contested files, bankruptcy, and redemption rights can stretch any timeline, so adjust it under Advanced Assumptions if your county runs slower.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="bpo">Property Value (BPO / Fair Market Value)</label>
+          <p class="input-helper">Your best estimate of what the property is worth today.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="bpo" name="bpo" min="0" step="0.01" inputmode="decimal" placeholder="145000" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="bpo-explain" data-target="bpo-explain">What is this?</button>
+          <div id="bpo-explain" class="explanation" hidden>
+            <p>On a non-performing note, the property is your real collateral. It's what you'll actually sell if you have to foreclose. Get a Broker Price Opinion (BPO), not a Zillow guess. The calculator also uses this value to estimate forced-placed insurance and property taxes during the foreclosure timeline.</p>
+          </div>
+        </div>
+
+        <p class="form-section-title">Your Target</p>
+
+        <div class="input-group">
+          <label class="input-label" for="target">Target Annual Return (IRR)</label>
+          <p class="input-helper">The annualized return you want if you have to take this deal all the way through foreclosure. Non-performing notes typically target 16 to 20 percent or more.</p>
+          <div class="input-wrapper has-suffix">
+            <input type="number" id="target" name="target" min="1" max="99" step="0.1" inputmode="decimal" value="18" autocomplete="off">
+            <span class="suffix" aria-hidden="true">%</span>
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="target-explain" data-target="target-explain">What is this?</button>
+          <div id="target-explain" class="explanation" hidden>
+            <p>IRR (internal rate of return) accounts for both how much you make and how long your money is tied up. Non-performing notes demand higher target returns than performing notes because you're paying legal fees, insurance, and taxes for months or years before a single dollar comes back.</p>
+          </div>
+        </div>
+
+        <button type="button" class="advanced-toggle" id="advanced-toggle" aria-expanded="false" aria-controls="advanced-panel">
+          <span>Advanced Assumptions (pre-filled with defaults)</span>
+          <span class="chevron" aria-hidden="true">&#9660;</span>
+        </button>
+
+        <div class="advanced-panel" id="advanced-panel" hidden>
+          <p class="advanced-note">These defaults are round estimates from my own underwriting. Adjust them to your deal and your servicer. Legal costs for a routine foreclosure usually land between $2,000 and $5,000, and contested files run higher. Timelines vary by county, not just by state.</p>
+          <div class="adv-grid">
+
+            <p class="adv-section">Acquisition &amp; Servicing</p>
+            <div class="adv-group">
+              <label for="dd">Due diligence costs</label>
+              <div class="input-wrapper has-prefix">
+                <span class="prefix" aria-hidden="true">$</span>
+                <input type="number" id="dd" min="0" step="1" value="500" autocomplete="off">
+              </div>
+            </div>
+            <div class="adv-group">
+              <label for="specialsvc">Special servicing fee (monthly)</label>
+              <div class="input-wrapper has-prefix">
+                <span class="prefix" aria-hidden="true">$</span>
+                <input type="number" id="specialsvc" min="0" step="1" value="95" autocomplete="off">
+              </div>
+            </div>
+            <div class="adv-group">
+              <label for="fpi">Forced-placed insurance (% of value / yr)</label>
+              <div class="input-wrapper has-suffix">
+                <input type="number" id="fpi" min="0" step="0.1" value="1" autocomplete="off">
+                <span class="suffix" aria-hidden="true">%</span>
+              </div>
+            </div>
+            <div class="adv-group">
+              <label for="tax">Property taxes (% of value / yr)</label>
+              <div class="input-wrapper has-suffix">
+                <input type="number" id="tax" min="0" step="0.1" value="2" autocomplete="off">
+                <span class="suffix" aria-hidden="true">%</span>
+              </div>
+            </div>
+
+            <p class="adv-section">Foreclosure &amp; Sale</p>
+            <div class="adv-group">
+              <label for="fcmonths">Months to foreclose (auto-set by state, includes delay buffer)</label>
+              <div class="input-wrapper has-suffix">
+                <input type="number" id="fcmonths" min="1" max="72" step="1" value="12" autocomplete="off">
+                <span class="suffix" aria-hidden="true">mo</span>
+              </div>
+            </div>
+            <div class="adv-group">
+              <label for="legal">Legal &amp; other recoverable costs</label>
+              <div class="input-wrapper has-prefix">
+                <span class="prefix" aria-hidden="true">$</span>
+                <input type="number" id="legal" min="0" step="100" value="3500" autocomplete="off">
+              </div>
+            </div>
+            <div class="adv-group">
+              <label for="miscfc">Miscellaneous non-recoverable costs</label>
+              <div class="input-wrapper has-prefix">
+                <span class="prefix" aria-hidden="true">$</span>
+                <input type="number" id="miscfc" min="0" step="100" value="1000" autocomplete="off">
+              </div>
+            </div>
+            <div class="adv-group">
+              <label for="discount">Discounted sale (% off value)</label>
+              <div class="input-wrapper has-suffix">
+                <input type="number" id="discount" min="0" max="90" step="1" value="15" autocomplete="off">
+                <span class="suffix" aria-hidden="true">%</span>
+              </div>
+            </div>
+            <div class="adv-group">
+              <label for="commission">Sales commission + closing costs</label>
+              <div class="input-wrapper has-suffix">
+                <input type="number" id="commission" min="0" max="30" step="0.5" value="10" autocomplete="off">
+                <span class="suffix" aria-hidden="true">%</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <button type="submit" id="calculate" class="calculate-btn" disabled>Calculate My Offer</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- SECTION 5: RESULTS (hidden until calculate is clicked) -->
+  <section id="results" hidden aria-live="polite">
+    <p class="stale-hint">Inputs changed. Click Calculate again to refresh these numbers.</p>
+
+    <!-- 5a: Offer price + metrics -->
+    <div class="results-card">
+      <p class="offer-label">Your Maximum Offer Price</p>
+      <p class="offer-price" id="offer-price">$0</p>
+      <p class="offer-subtext" id="offer-subtext">Priced off the foreclosure exit, the worst realistic case. If the borrower reinstates instead, that only makes the deal better.</p>
+
+      <div class="metric-chips">
+        <div class="metric-chip" id="chip-upb">
+          <div class="metric-value" id="m-upb">&ndash;</div>
+          <div class="metric-label">of UPB</div>
+        </div>
+        <div class="metric-chip" id="chip-itv">
+          <div class="metric-value" id="m-itv">&ndash;</div>
+          <div class="metric-label">ITV (offer &divide; value)</div>
+        </div>
+        <div class="metric-chip">
+          <div class="metric-value" id="m-months">&ndash;</div>
+          <div class="metric-label">Months to exit</div>
+        </div>
+        <div class="metric-chip">
+          <div class="metric-value" id="m-profit">&ndash;</div>
+          <div class="metric-label">Projected profit</div>
+        </div>
+      </div>
+
+      <!-- 5b: breakdown -->
+      <div class="breakdown">
+        <h3>The Foreclosure Path, Month by Month</h3>
+        <div class="breakdown-row">
+          <span class="label">Purchase price + due diligence (day one)</span>
+          <span class="value" id="bd-acq">$0</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="label" id="bd-carry-label">Carry costs during foreclosure</span>
+          <span class="value" id="bd-carry">$0</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="label">Legal &amp; miscellaneous foreclosure costs</span>
+          <span class="value" id="bd-legal">$0</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="label">Net proceeds when the property sells</span>
+          <span class="value" id="bd-proceeds">$0</span>
+        </div>
+        <div class="breakdown-row profit">
+          <span class="label">Projected gross profit</span>
+          <span class="value" id="bd-profit">$0</span>
+        </div>
+      </div>
+      <p class="cap-note" id="cap-note" hidden>Note: the property is worth more than the debt. Foreclosure sale proceeds are capped at the total payoff plus your recoverable costs. You cannot collect more than you are owed, and that cap is already reflected above.</p>
+    </div>
+
+    <!-- 5c: offer table at other target returns -->
+    <div class="results-card">
+      <h3 style="margin:0 0 0.25rem; color:var(--brand-indigo); font-size:1.15rem; font-weight:800;">Offers at Other Target Returns</h3>
+      <p class="table-caption" style="margin-top:0.25rem;">Same deal, same foreclosure path. Only the target return changes. This is your negotiating range.</p>
+      <div class="offer-table-wrap">
+        <table class="offer-table" id="fc-table">
+          <thead>
+            <tr><th>Target IRR</th><th>Max Offer</th><th>% of UPB</th><th>% of Value</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 5d: stress test callout -->
+    <div class="callout callout-stress">
+      <h3>Stress Test This Number</h3>
+      <p>Your offer price assumes the model's timeline and costs hold. Before you submit it, ask:</p>
+      <ul>
+        <li>What if foreclosure takes twice as long in this county? Re-run the number with the longer timeline.</li>
+        <li>What if the BPO is optimistic and the property sells for 25% off instead of 15%?</li>
+        <li>What if there are unpaid property taxes, municipal liens, or code violations that come off the top?</li>
+        <li>What if the borrower files bankruptcy mid-foreclosure and adds 12 or more months?</li>
+        <li>If the state has a redemption period, can you carry the property until title is truly clear?</li>
+      </ul>
+      <p class="closing">If the math still works under each of these, the offer is solid. If not, lower your bid or pass on the deal.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 6: WHAT THIS CALCULATOR DOESN'T DO -->
+  <section class="doesnt-do">
+    <div class="doesnt-do-inner">
+      <h2>What This Calculator Doesn't Do</h2>
+      <p>This tool prices one exit path with the numbers you give it. It does not verify the chain of title or the collateral file. It does not check your lien position, unpaid property taxes, or municipal liens, any of which can quietly eat your entire margin. It does not know whether the property is occupied or whether the borrower is a bankruptcy risk, and its state guidance is a starting point, not legal advice. Those skills are how you turn a calculator number into a real, defensible offer.</p>
+      <p>The structured training I personally recommend for those skills is Kevin Shortle's mentorship program. Kevin has walked collateral files with me deal by deal and helped me develop the discipline to evaluate notes beyond what any calculator can show.</p>
+      <div class="kevin-cta-wrapper">
+        <a class="kevin-cta" href="https://learn.kevinshortle.com/a/2147901237/kyXPLotM" target="_blank" rel="noopener noreferrer">
+          Learn About Kevin's Mentorship
+        </a>
+        <p class="affiliate-note">Full disclosure: I'm an affiliate of Kevin's program. I recommend it because of how it shaped my own investing.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 7: FOOTER -->
+  <footer class="site-footer">
+    <a class="back-link" href="index.html">&larr; Performing Note Calculator</a>
+    <p class="copyright">&copy; 2026 Earn Grow Thrive LLC dba Wealth With Notes</p>
+    <p class="disclaimer">This calculator is for educational purposes only. It is not investment, legal, or financial advice. State process information is a general guide, is not guaranteed, and changes over time; always verify with licensed local counsel. Non-performing note investing involves substantial risk including total loss of principal. Always perform full due diligence before making investment decisions.</p>
+  </footer>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // ── State reference data ─────────────────────────────────────────
+      // General guides compiled from public sources; timeline figures are
+      // approximate uncontested-process estimates. sol = years to enforce
+      // the promissory note. Verify locally before relying on any of it.
+      var STATES = {
+        AL: { name: 'Alabama',              process: 'Both (mostly non-judicial)', lo: 2,  hi: 4,  redemption: 'Up to about 12 months', sol: 6 },
+        AK: { name: 'Alaska',               process: 'Both (mostly non-judicial)', lo: 4,  hi: 5,  redemption: 'None',                  sol: 3 },
+        AZ: { name: 'Arizona',              process: 'Both (mostly non-judicial)', lo: 4,  hi: 5,  redemption: 'Up to about 6 months',  sol: 6 },
+        AR: { name: 'Arkansas',             process: 'Both',                       lo: 5,  hi: 6,  redemption: 'Up to about 12 months', sol: 5 },
+        CA: { name: 'California',           process: 'Both (mostly non-judicial)', lo: 4,  hi: 6,  redemption: 'Rare in practice',      sol: 4 },
+        CO: { name: 'Colorado',             process: 'Both (mostly non-judicial)', lo: 3,  hi: 6,  redemption: 'None',                  sol: 6 },
+        CT: { name: 'Connecticut',          process: 'Judicial',                   lo: 6,  hi: 7,  redemption: 'Set by the court',      sol: 6 },
+        DE: { name: 'Delaware',             process: 'Judicial',                   lo: 4,  hi: 8,  redemption: 'None',                  sol: 3 },
+        DC: { name: 'District of Columbia', process: 'Non-judicial',               lo: 3,  hi: 5,  redemption: 'None',                  sol: 3 },
+        FL: { name: 'Florida',              process: 'Judicial',                   lo: 5,  hi: 7,  redemption: 'Limited, until sale',   sol: 5 },
+        GA: { name: 'Georgia',              process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'None',                  sol: 6 },
+        HI: { name: 'Hawaii',               process: 'Both',                       lo: 4,  hi: 5,  redemption: 'None',                  sol: 6 },
+        ID: { name: 'Idaho',                process: 'Both (mostly non-judicial)', lo: 6,  hi: 7,  redemption: 'None',                  sol: 5 },
+        IL: { name: 'Illinois',             process: 'Judicial',                   lo: 8,  hi: 11, redemption: 'Roughly 3 to 7 months', sol: 10 },
+        IN: { name: 'Indiana',              process: 'Judicial',                   lo: 6,  hi: 8,  redemption: 'None',                  sol: 10 },
+        IA: { name: 'Iowa',                 process: 'Both (mostly judicial)',     lo: 6,  hi: 7,  redemption: 'About 12 months',       sol: 5 },
+        KS: { name: 'Kansas',               process: 'Judicial',                   lo: 4,  hi: 6,  redemption: 'Up to about 12 months', sol: 3 },
+        KY: { name: 'Kentucky',             process: 'Judicial',                   lo: 6,  hi: 7,  redemption: 'Up to about 12 months', sol: 15 },
+        LA: { name: 'Louisiana',            process: 'Judicial',                   lo: 3,  hi: 7,  redemption: 'None',                  sol: 10 },
+        ME: { name: 'Maine',                process: 'Judicial',                   lo: 7,  hi: 11, redemption: 'About 3 months',        sol: 6 },
+        MD: { name: 'Maryland',             process: 'Judicial',                   lo: 3,  hi: 4,  redemption: 'Set by the court',      sol: 6 },
+        MA: { name: 'Massachusetts',        process: 'Judicial',                   lo: 4,  hi: 5,  redemption: 'None',                  sol: 6 },
+        MI: { name: 'Michigan',             process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'Up to about 12 months', sol: 6 },
+        MN: { name: 'Minnesota',            process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'About 6 months',        sol: 6 },
+        MS: { name: 'Mississippi',          process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'None',                  sol: 3 },
+        MO: { name: 'Missouri',             process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'Up to about 12 months', sol: 6 },
+        MT: { name: 'Montana',              process: 'Both (mostly non-judicial)', lo: 5,  hi: 7,  redemption: 'About 12 months',       sol: 8 },
+        NE: { name: 'Nebraska',             process: 'Judicial',                   lo: 6,  hi: 7,  redemption: 'None',                  sol: 5 },
+        NV: { name: 'Nevada',               process: 'Both (mostly non-judicial)', lo: 4,  hi: 6,  redemption: 'None',                  sol: 4 },
+        NH: { name: 'New Hampshire',        process: 'Non-judicial',               lo: 3,  hi: 4,  redemption: 'None',                  sol: 3 },
+        NJ: { name: 'New Jersey',           process: 'Judicial',                   lo: 4,  hi: 11, redemption: 'About 6 months',        sol: 6 },
+        NM: { name: 'New Mexico',           process: 'Judicial',                   lo: 5,  hi: 7,  redemption: 'About 9 months',        sol: 4 },
+        NY: { name: 'New York',             process: 'Judicial',                   lo: 5,  hi: 9,  redemption: 'None',                  sol: 6 },
+        NC: { name: 'North Carolina',       process: 'Both (mostly non-judicial)', lo: 3,  hi: 5,  redemption: 'About 10 days',         sol: 5 },
+        ND: { name: 'North Dakota',         process: 'Judicial',                   lo: 4,  hi: 6,  redemption: 'About 2 months',        sol: 6 },
+        OH: { name: 'Ohio',                 process: 'Judicial',                   lo: 6,  hi: 8,  redemption: 'Until sale confirmed',  sol: 6 },
+        OK: { name: 'Oklahoma',             process: 'Both (mostly judicial)',     lo: 5,  hi: 8,  redemption: 'Until sale confirmed',  sol: 5 },
+        OR: { name: 'Oregon',               process: 'Both (mostly non-judicial)', lo: 5,  hi: 7,  redemption: 'None',                  sol: 6 },
+        PA: { name: 'Pennsylvania',         process: 'Judicial',                   lo: 4,  hi: 10, redemption: 'None',                  sol: 4 },
+        RI: { name: 'Rhode Island',         process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'Up to about 3 years',   sol: 10 },
+        SC: { name: 'South Carolina',       process: 'Judicial',                   lo: 5,  hi: 8,  redemption: 'None',                  sol: 3 },
+        SD: { name: 'South Dakota',         process: 'Both',                       lo: 7,  hi: 10, redemption: 'Up to about 12 months', sol: 6 },
+        TN: { name: 'Tennessee',            process: 'Non-judicial',               lo: 3,  hi: 4,  redemption: 'Up to about 2 years',   sol: 6 },
+        TX: { name: 'Texas',                process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'None',                  sol: 4 },
+        UT: { name: 'Utah',                 process: 'Both (mostly non-judicial)', lo: 5,  hi: 6,  redemption: 'About 6 months',        sol: 6 },
+        VT: { name: 'Vermont',              process: 'Judicial',                   lo: 8,  hi: 11, redemption: 'Up to about 6 months',  sol: 6 },
+        VA: { name: 'Virginia',             process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'None',                  sol: 5 },
+        WA: { name: 'Washington',           process: 'Both (mostly non-judicial)', lo: 5,  hi: 6,  redemption: 'None',                  sol: 6 },
+        WV: { name: 'West Virginia',        process: 'Non-judicial',               lo: 3,  hi: 4,  redemption: 'None',                  sol: 10 },
+        WI: { name: 'Wisconsin',            process: 'Both (mostly judicial)',     lo: 7,  hi: 11, redemption: 'None',                  sol: 10 },
+        WY: { name: 'Wyoming',              process: 'Both (mostly non-judicial)', lo: 3,  hi: 4,  redemption: 'About 3 months',        sol: 10 }
+      };
+      var DELAY_BUFFER = 1; // extra month added to the state's high end
+
+      // ── Date helpers ─────────────────────────────────────────────────
+      function addMonths(d, n) { return new Date(d.getFullYear(), d.getMonth() + n, d.getDate()); }
+      function daysBetween(a, b) { return (b - a) / 86400000; }
+
+      // ── XNPV (Excel convention: actual days / 365) ───────────────────
+      function xnpv(rate, flows, d0) {
+        var s = 0;
+        for (var i = 0; i < flows.length; i++) {
+          s += flows[i].amount / Math.pow(1 + rate, daysBetween(d0, flows[i].date) / 365);
+        }
+        return s;
+      }
+
+      // ── Model ────────────────────────────────────────────────────────
+      // Monthly cash-flow model: acquisition on the 1st of next month,
+      // cash flows dated monthly, t0 (outlay) the day before acquisition.
+      function readInputs() {
+        var num = function (id) { return parseFloat(document.getElementById(id).value); };
+        return {
+          upb: num('upb'),
+          pmt: num('pmt'),
+          rate: num('rate') / 100,
+          arrears: num('arrears') || 0,
+          bpo: num('bpo'),
+          target: num('target') / 100,
+          dd: num('dd') || 0,
+          specialSvc: num('specialsvc') || 0,
+          fpiPct: (num('fpi') || 0) / 100,
+          taxPct: (num('tax') || 0) / 100,
+          fcMonths: Math.max(1, Math.round(num('fcmonths') || 1)),
+          legal: num('legal') || 0,
+          miscFC: num('miscfc') || 0,
+          discountPct: (num('discount') || 0) / 100,
+          commissionPct: (num('commission') || 0) / 100
+        };
+      }
+
+      function buildModel(inp) {
+        var today = new Date();
+        var acqDate = new Date(today.getFullYear(), today.getMonth() + 1, 1);
+        var t0date = new Date(acqDate.getTime() - 86400000);
+
+        var fpiMo = inp.bpo * inp.fpiPct / 12;
+        var taxMo = inp.bpo * inp.taxPct / 12;
+        var carryMo = fpiMo + taxMo + inp.specialSvc;
+        var payoff = inp.upb + inp.arrears;
+
+        // Foreclosure-path future cash flows (excludes the day-one outlay)
+        var legalMonth = Math.round(inp.fcMonths / 2 + 1e-9);
+        var netUncapped = inp.bpo * (1 - inp.discountPct) * (1 - inp.commissionPct);
+        var cap = payoff + inp.legal + (fpiMo + taxMo) * inp.fcMonths; // owed + recoverable advances
+        var capped = netUncapped > cap;
+        var netProceeds = capped ? cap : netUncapped;
+
+        var fcFlows = [];
+        var lastMonth = inp.fcMonths + 1; // sale closes the month after foreclosure completes
+        for (var m = 1; m <= lastMonth; m++) {
+          var amt = 0;
+          if (m <= inp.fcMonths) amt -= carryMo;
+          if (m === legalMonth) amt -= inp.legal;
+          if (m === lastMonth) amt += netProceeds - inp.miscFC;
+          if (amt !== 0) fcFlows.push({ date: addMonths(acqDate, m - 1), amount: amt });
+        }
+
+        return {
+          acqDate: acqDate, t0date: t0date,
+          fpiMo: fpiMo, taxMo: taxMo, carryMo: carryMo,
+          payoff: payoff,
+          fcFlows: fcFlows,
+          netProceeds: netProceeds, capped: capped,
+          totalMonths: lastMonth
+        };
+      }
+
+      // Max price P such that XIRR of [-(P + dd) at t0, futureFlows] = target
+      function maxOffer(model, target, dd) {
+        return xnpv(target, model.fcFlows, model.t0date) - dd;
+      }
+
+      // ── Formatters ───────────────────────────────────────────────────
+      var currencyFmt = new Intl.NumberFormat('en-US', {
+        style: 'currency', currency: 'USD',
+        minimumFractionDigits: 0, maximumFractionDigits: 0
+      });
+      function fmt$(n) { return currencyFmt.format(Math.round(n)); }
+      function fmtPct(n, decimals) {
+        if (decimals === undefined) decimals = 1;
+        return n.toFixed(decimals) + '%';
+      }
+
+      // ── DOM refs ─────────────────────────────────────────────────────
+      var form = document.getElementById('calc-form');
+      var coreIds = ['upb', 'pmt', 'rate', 'bpo', 'target'];
+      var allIds = ['upb', 'pmt', 'rate', 'arrears', 'bpo', 'target', 'dd', 'specialsvc',
+        'fpi', 'tax', 'fcmonths', 'legal', 'miscfc', 'discount', 'commission'];
+      var calcBtn = document.getElementById('calculate');
+      var resultsSection = document.getElementById('results');
+      var stateSelect = document.getElementById('state');
+      var hasCalculated = false;
+
+      function isValid(id) {
+        var v = parseFloat(document.getElementById(id).value);
+        return !isNaN(v) && v > 0 && isFinite(v);
+      }
+      function refreshButton() {
+        var ok = coreIds.every(isValid) && stateSelect.value !== '';
+        calcBtn.disabled = !ok;
+      }
+      allIds.forEach(function (id) {
+        var el = document.getElementById(id);
+        el.addEventListener('input', function () {
+          var raw = this.value;
+          if (raw && (parseFloat(raw) < 0 || isNaN(parseFloat(raw)))) {
+            this.classList.add('invalid');
+          } else {
+            this.classList.remove('invalid');
+          }
+          refreshButton();
+          if (hasCalculated) resultsSection.classList.add('stale');
+        });
+      });
+
+      // ── State dropdown ───────────────────────────────────────────────
+      Object.keys(STATES)
+        .sort(function (a, b) { return STATES[a].name.localeCompare(STATES[b].name); })
+        .forEach(function (abbr) {
+          var opt = document.createElement('option');
+          opt.value = abbr;
+          opt.textContent = STATES[abbr].name + ' (' + abbr + ')';
+          stateSelect.appendChild(opt);
+        });
+
+      stateSelect.addEventListener('change', function () {
+        var abbr = stateSelect.value;
+        var card = document.getElementById('state-card');
+        if (!abbr) {
+          card.setAttribute('hidden', '');
+          refreshButton();
+          return;
+        }
+        var s = STATES[abbr];
+        document.getElementById('sc-title').textContent = s.name + ' at a glance';
+        document.getElementById('sc-process').textContent = s.process;
+        document.getElementById('sc-months').textContent = 'Roughly ' + s.lo + ' to ' + s.hi + ' months, uncontested';
+        document.getElementById('sc-redemption').textContent = s.redemption;
+        document.getElementById('sc-sol').textContent = 'About ' + s.sol + ' years';
+        card.removeAttribute('hidden');
+        // Auto-set the modeling assumption: state high end plus a delay buffer
+        document.getElementById('fcmonths').value = s.hi + DELAY_BUFFER;
+        refreshButton();
+        if (hasCalculated) resultsSection.classList.add('stale');
+      });
+
+      // ── "What is this?" toggles (only one open at a time) ────────────
+      var toggles = document.querySelectorAll('.what-is-this');
+      toggles.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var targetId = btn.getAttribute('data-target');
+          var panel = document.getElementById(targetId);
+          var isOpen = !panel.hasAttribute('hidden');
+          toggles.forEach(function (b) {
+            var p = document.getElementById(b.getAttribute('data-target'));
+            p.setAttribute('hidden', '');
+            b.setAttribute('aria-expanded', 'false');
+            b.textContent = 'What is this?';
+          });
+          if (!isOpen) {
+            panel.removeAttribute('hidden');
+            btn.setAttribute('aria-expanded', 'true');
+            btn.textContent = 'Close';
+          }
+        });
+      });
+
+      // ── Advanced panel toggle ────────────────────────────────────────
+      var advToggle = document.getElementById('advanced-toggle');
+      var advPanel = document.getElementById('advanced-panel');
+      advToggle.addEventListener('click', function () {
+        var open = !advPanel.hasAttribute('hidden');
+        if (open) {
+          advPanel.setAttribute('hidden', '');
+          advToggle.setAttribute('aria-expanded', 'false');
+        } else {
+          advPanel.removeAttribute('hidden');
+          advToggle.setAttribute('aria-expanded', 'true');
+        }
+      });
+
+      // ── Calculate ────────────────────────────────────────────────────
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (calcBtn.disabled) return;
+
+        var inp = readInputs();
+        var model = buildModel(inp);
+
+        var offer = Math.max(0, maxOffer(model, inp.target, inp.dd));
+
+        // Headline + metric chips
+        document.getElementById('offer-price').textContent = fmt$(offer);
+        var pctUpb = (offer / inp.upb) * 100;
+        var itv = (offer / inp.bpo) * 100;
+        document.getElementById('m-upb').textContent = fmtPct(pctUpb);
+        document.getElementById('m-itv').textContent = fmtPct(itv);
+        document.getElementById('m-months').textContent = String(model.totalMonths);
+
+        var chipItv = document.getElementById('chip-itv');
+        chipItv.classList.remove('green', 'blue', 'amber', 'red');
+        chipItv.classList.add(itv <= 50 ? 'green' : itv <= 65 ? 'blue' : itv <= 75 ? 'amber' : 'red');
+
+        // Breakdown at the headline offer
+        var acqCost = offer + inp.dd;
+        var carry = model.carryMo * inp.fcMonths;
+        var legalMisc = inp.legal + inp.miscFC;
+        var profit = model.netProceeds - acqCost - carry - legalMisc;
+        document.getElementById('m-profit').textContent = fmt$(profit);
+        document.getElementById('bd-acq').textContent = '−' + fmt$(acqCost);
+        document.getElementById('bd-carry-label').textContent =
+          'Insurance, taxes + special servicing during foreclosure (' + inp.fcMonths + ' mo × ' + fmt$(model.carryMo) + ')';
+        document.getElementById('bd-carry').textContent = '−' + fmt$(carry);
+        document.getElementById('bd-legal').textContent = '−' + fmt$(legalMisc);
+        document.getElementById('bd-proceeds').textContent = '+' + fmt$(model.netProceeds);
+        document.getElementById('bd-profit').textContent = fmt$(profit);
+
+        var capNote = document.getElementById('cap-note');
+        if (model.capped) capNote.removeAttribute('hidden');
+        else capNote.setAttribute('hidden', '');
+
+        // Offer table at standard target returns + the chosen one
+        var targets = [0.16, 0.18, 0.20];
+        var tPct = inp.target;
+        if (targets.indexOf(tPct) === -1) {
+          targets.push(tPct);
+          targets.sort(function (a, b) { return a - b; });
+        }
+        var tbody = document.querySelector('#fc-table tbody');
+        tbody.innerHTML = '';
+        targets.forEach(function (t) {
+          var o = Math.max(0, maxOffer(model, t, inp.dd));
+          var tr = document.createElement('tr');
+          if (Math.abs(t - tPct) < 1e-9) tr.className = 'highlight';
+          tr.innerHTML = '<td>' + fmtPct(t * 100, 1) + (Math.abs(t - tPct) < 1e-9 ? ' (your target)' : '') + '</td>' +
+            '<td>' + fmt$(o) + '</td>' +
+            '<td>' + fmtPct(o / inp.upb * 100) + '</td>' +
+            '<td>' + fmtPct(o / inp.bpo * 100) + '</td>';
+          tbody.appendChild(tr);
+        });
+
+        hasCalculated = true;
+        resultsSection.removeAttribute('hidden');
+        resultsSection.classList.remove('stale');
+
+        setTimeout(function () {
+          resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 50);
+      });
+
+      // ── Initial state ────────────────────────────────────────────────
+      refreshButton();
+    })();
+  </script>
+</body>
+</html>

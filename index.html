@@ -131,6 +131,16 @@
     .input-group:last-of-type {
       margin-bottom: 1rem;
     }
+    .form-section-title {
+      color: var(--brand-indigo-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 800;
+      font-size: 0.8rem;
+      margin: 2.25rem 0 1.25rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--brand-light);
+    }
     .input-label {
       display: block;
       font-weight: 700;
@@ -321,6 +331,43 @@
       font-feature-settings: 'tnum';
     }
     .breakdown-row.profit .value { color: var(--brand-indigo); }
+
+    /* Offer tables */
+    .offer-table-wrap { overflow-x: auto; margin-top: 1rem; }
+    table.offer-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.92rem;
+    }
+    table.offer-table th {
+      text-align: right;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--brand-light);
+    }
+    table.offer-table th:first-child { text-align: left; }
+    table.offer-table td {
+      text-align: right;
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--brand-bg);
+      font-feature-settings: 'tnum';
+      white-space: nowrap;
+    }
+    table.offer-table td:first-child { text-align: left; font-weight: 700; color: var(--brand-indigo-dark); }
+    table.offer-table tr.highlight td {
+      background: var(--brand-light);
+      font-weight: 700;
+    }
+    .table-caption {
+      font-size: 0.85rem;
+      color: #555;
+      margin: 0.75rem 0 0;
+      line-height: 1.5;
+    }
 
     /* Callout boxes */
     .callout {
@@ -561,6 +608,34 @@
           </div>
         </div>
 
+        <p class="form-section-title">Acquisition &amp; Servicing</p>
+
+        <div class="input-group">
+          <label class="input-label" for="dd">Due Diligence Cost</label>
+          <p class="input-helper">What you'll spend to vet the deal before closing: title report, O&amp;E, BPO, collateral file review.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="dd" name="dd" min="0" step="1" inputmode="decimal" value="500" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="dd-explain" data-target="dd-explain">What is this?</button>
+          <div id="dd-explain" class="explanation" hidden>
+            <p>Due diligence money is spent whether or not the deal closes, so it is part of your investment. The calculator subtracts it from the offer price so your target yield is on the total cash you put in, not just the purchase price.</p>
+          </div>
+        </div>
+
+        <div class="input-group">
+          <label class="input-label" for="svc">Monthly Servicing Fee</label>
+          <p class="input-helper">What your loan servicer charges per month to collect payments and handle escrow.</p>
+          <div class="input-wrapper has-prefix">
+            <span class="prefix" aria-hidden="true">$</span>
+            <input type="number" id="svc" name="svc" min="0" step="1" inputmode="decimal" value="35" autocomplete="off">
+          </div>
+          <button type="button" class="what-is-this" aria-expanded="false" aria-controls="svc-explain" data-target="svc-explain">What is this?</button>
+          <div id="svc-explain" class="explanation" hidden>
+            <p>Most note investors use a licensed servicer, and the fee comes out of every payment before you see a dime. The calculator prices the offer off your net monthly cash flow (payment minus servicing) so the yield you target is the yield you actually earn.</p>
+          </div>
+        </div>
+
         <button type="submit" id="calculate" class="calculate-btn" disabled>Calculate My Offer</button>
       </form>
     </div>
@@ -574,7 +649,7 @@
     <div class="results-card">
       <p class="offer-label">Your Maximum Offer Price</p>
       <p class="offer-price" id="offer-price">$0.00</p>
-      <p class="offer-subtext">This is the price that gets you your target yield based on the inputs above.</p>
+      <p class="offer-subtext">This is the price that gets you your target yield after due diligence and monthly servicing costs.</p>
 
       <div class="breakdown">
         <div class="breakdown-row">
@@ -589,10 +664,32 @@
           <span class="label">Total payments you will collect over the remaining term</span>
           <span class="value" id="bd-total-payments">$0.00</span>
         </div>
+        <div class="breakdown-row">
+          <span class="label" id="bd-svc-label">Servicing fees over the remaining term</span>
+          <span class="value" id="bd-svc">$0.00</span>
+        </div>
+        <div class="breakdown-row">
+          <span class="label">Due diligence cost</span>
+          <span class="value" id="bd-dd">$0.00</span>
+        </div>
         <div class="breakdown-row profit">
           <span class="label">Total profit if all payments come in</span>
           <span class="value" id="bd-profit">$0.00</span>
         </div>
+      </div>
+    </div>
+
+    <!-- 5b2: offer table at other target yields -->
+    <div class="results-card">
+      <h3 style="margin:0 0 0.25rem; color:var(--brand-indigo); font-size:1.15rem; font-weight:800;">Offers at Other Target Yields</h3>
+      <p class="table-caption" style="margin-top:0.25rem;">Same note, same costs. Only the target yield changes. This is your negotiating range.</p>
+      <div class="offer-table-wrap">
+        <table class="offer-table" id="yield-table">
+          <thead>
+            <tr><th>Target Yield (IRR)</th><th>Max Offer</th><th>% of UPB</th><th>Total Profit</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
       </div>
     </div>
 
@@ -651,10 +748,16 @@
       'use strict';
 
       // ── Math ──────────────────────────────────────────────────────────
-      function calculateOfferPrice(pmt, n, annualYield) {
+      // Offer = PV of the net monthly cash flow (payment minus servicing)
+      // at the target yield, minus due diligence, so the yield is earned
+      // on the total cash invested.
+      function calculateOfferPrice(pmt, svc, n, annualYield, dd) {
+        var net = pmt - svc;
         var monthlyRate = (annualYield / 100) / 12;
-        if (monthlyRate === 0) return pmt * n;
-        return pmt * ((1 - Math.pow(1 + monthlyRate, -n)) / monthlyRate);
+        var pv = monthlyRate === 0
+          ? net * n
+          : net * ((1 - Math.pow(1 + monthlyRate, -n)) / monthlyRate);
+        return pv - dd;
       }
 
       // ── Formatters ────────────────────────────────────────────────────
@@ -676,7 +779,9 @@
         upb: document.getElementById('upb'),
         pmt: document.getElementById('pmt'),
         term: document.getElementById('term'),
-        yield: document.getElementById('yield')
+        yield: document.getElementById('yield'),
+        dd: document.getElementById('dd'),
+        svc: document.getElementById('svc')
       };
       var calcBtn = document.getElementById('calculate');
       var resultsSection = document.getElementById('results');
@@ -684,6 +789,9 @@
       var bdUpb = document.getElementById('bd-upb');
       var bdDiscount = document.getElementById('bd-discount');
       var bdTotalPayments = document.getElementById('bd-total-payments');
+      var bdSvcLabel = document.getElementById('bd-svc-label');
+      var bdSvc = document.getElementById('bd-svc');
+      var bdDd = document.getElementById('bd-dd');
       var bdProfit = document.getElementById('bd-profit');
       var propertyValueInput = document.getElementById('property-value');
       var itvVerdictEl = document.getElementById('itv-verdict');
@@ -747,12 +855,15 @@
         var pmt = parseFloat(inputs.pmt.value);
         var n = parseFloat(inputs.term.value);
         var yieldVal = parseFloat(inputs.yield.value);
+        var dd = parseFloat(inputs.dd.value) || 0;
+        var svc = parseFloat(inputs.svc.value) || 0;
 
-        var offer = calculateOfferPrice(pmt, n, yieldVal);
+        var offer = Math.max(0, calculateOfferPrice(pmt, svc, n, yieldVal, dd));
         var discount = upb - offer;
         var discountPct = (discount / upb) * 100;
         var totalPayments = pmt * n;
-        var profit = totalPayments - offer;
+        var totalSvc = svc * n;
+        var profit = totalPayments - totalSvc - dd - offer;
 
         lastOfferPrice = offer;
         hasCalculated = true;
@@ -761,7 +872,30 @@
         bdUpb.textContent = fmt$(upb);
         bdDiscount.textContent = fmt$(discount) + ' (' + fmtPct(discountPct) + ')';
         bdTotalPayments.textContent = fmt$(totalPayments);
+        bdSvcLabel.textContent = 'Servicing fees over the remaining term (' + n + ' mo × ' + fmt$(svc) + ')';
+        bdSvc.textContent = '-' + fmt$(totalSvc);
+        bdDd.textContent = '-' + fmt$(dd);
         bdProfit.textContent = fmt$(profit);
+
+        // Offer table at standard target yields + the chosen one
+        var targets = [10, 12, 15];
+        if (targets.indexOf(yieldVal) === -1) {
+          targets.push(yieldVal);
+          targets.sort(function (a, b) { return a - b; });
+        }
+        var tbody = document.querySelector('#yield-table tbody');
+        tbody.innerHTML = '';
+        targets.forEach(function (t) {
+          var o = Math.max(0, calculateOfferPrice(pmt, svc, n, t, dd));
+          var p = totalPayments - totalSvc - dd - o;
+          var tr = document.createElement('tr');
+          if (t === yieldVal) tr.className = 'highlight';
+          tr.innerHTML = '<td>' + fmtPct(t, 1) + (t === yieldVal ? ' (your target)' : '') + '</td>' +
+            '<td>' + fmt$(o) + '</td>' +
+            '<td>' + fmtPct(o / upb * 100) + '</td>' +
+            '<td>' + fmt$(p) + '</td>';
+          tbody.appendChild(tr);
+        });
 
         resultsSection.removeAttribute('hidden');
         resultsSection.classList.remove('stale');
