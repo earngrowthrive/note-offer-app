@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/",
+      "has": [{ "type": "host", "value": "nonperforming.wealthwithnotes.com" }],
+      "destination": "/non-performing.html"
+    }
+  ]
+}
